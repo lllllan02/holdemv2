@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扑克游戏 - 顶部导航栏</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+
+        #top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            height: 80px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            font-size: 24px;
+            padding: 0 50px;
+        }
+
+        .left-section {
+            flex: 1;
+        }
+
+        .center-section {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .game-info-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .info-value.pot {
+            color: #FFD700;
+            font-size: 20px;
+        }
+
+        .right-section {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        #profile-container {
+            width: 280px;
+            height: 64px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 0 15px;
+        }
+
+        #profile-image {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            object-fit: cover;
+        }
+
+        #player-information-container {
+            margin-left: 10px;
+            flex: 1;
+        }
+
+        #player-information-container h1, h2 {
+            margin: 2px 0;
+            font-size: 16px;
+        }
+
+        #player-information-container h2 {
+            color: rgb(199, 197, 197);
+        }
+
+        #player-information-container h1 {
+            font-size: 18px;
+            color: #4CAF50;
+        }
+
+        #chips-container {
+            display: flex;
+            align-items: center;
+            margin-top: 5px;
+        }
+
+        #chips-image {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+        }
+
+        @media (max-width: 1024px) {
+            #top-bar {
+                padding: 0 20px;
+            }
+
+            .center-section {
+                gap: 15px;
+            }
+
+            .info-label {
+                font-size: 10px;
+            }
+
+            .info-value {
+                font-size: 14px;
+            }
+
+            .info-value.pot {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #top-bar {
+                height: 70px;
+                flex-direction: column;
+                padding: 10px 15px;
+                gap: 10px;
+            }
+
+            .left-section {
+                display: none;
+            }
+
+            .center-section {
+                gap: 10px;
+                flex: initial;
+            }
+
+            .right-section {
+                flex: initial;
+            }
+            
+            #profile-container {
+                width: 220px;
+            }
+            
+            #profile-image {
+                width: 48px;
+                height: 48px;
+            }
+            
+            #player-information-container h1 {
+                font-size: 16px;
+            }
+            
+            #player-information-container h2 {
+                font-size: 14px;
+            }
+
+            .game-info-item {
+                gap: 3px;
+            }
+
+            .info-label {
+                font-size: 9px;
+            }
+
+            .info-value {
+                font-size: 12px;
+            }
+
+            .info-value.pot {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="top-bar">
+        <!-- 左侧区域 (占位) -->
+        <div class="left-section"></div>
+
+        <!-- 中间区域 (游戏信息) -->
+        <div class="center-section">
+            <div class="game-info-item">
+                <span class="info-label">底池</span>
+                <span class="info-value pot" id="potAmount">$2,450</span>
+            </div>
+            <div class="game-info-item">
+                <span class="info-label">玩家</span>
+                <span class="info-value" id="playerCount">6人</span>
+            </div>
+            <div class="game-info-item">
+                <span class="info-label">阶段</span>
+                <span class="info-value" id="gameStage">翻牌前</span>
+            </div>
+        </div>
+
+        <!-- 右侧区域 (玩家信息) -->
+        <div class="right-section">
+            <div id="profile-container">
+                <img id="profile-image" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTYiIGhlaWdodD0iNTYiIHZpZXdCb3g9IjAgMCA1NiA1NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjgiIGN5PSIyOCIgcj0iMjgiIGZpbGw9IiM0Q0FGNTAiLz4KPHN2ZyB4PSIxNCIgeT0iMTQiIHdpZHRoPSIyOCIgaGVpZ2h0PSIyOCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwODYgMTQuMjA5MSA0IDEyIDRDOS43OTA4NiA0IDggNS43OTA4NiA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC42ODYyOSAxNCA2IDE2LjY4NjMgNiAyMFYyMkgxOFYyMEMxOCAxNi42ODYzIDE1LjMxMzcgMTQgMTIgMTRaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4KPC9zdmc+" alt="用户头像">
+                <div id="player-information-container">
+                    <h2>玩家昵称</h2>
+                    <div id="chips-container">
+                        <img id="chips-image" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTAiIGN5PSIxMCIgcj0iMTAiIGZpbGw9IiNGRkQ3MDAiLz4KPHN2ZyB4PSI1IiB5PSI1IiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMCAxMCIgZmlsbD0ibm9uZSI+Cjx0ZXh0IHg9IjUiIHk9IjciIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI4IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+JDwvdGV4dD4KPC9zdmc+Cjwvc3ZnPg==" alt="筹码">
+                        <h1 id="chips">1,250,000</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 玩家信息组件 - 可以通过 JavaScript 动态更新玩家数据
+        
+        // 模拟游戏信息更新
+        function updateGameInfo() {
+            // 更新底池
+            const potAmount = document.getElementById('potAmount');
+            const currentPot = parseInt(potAmount.textContent.replace('$', '').replace(',', ''));
+            const newPot = currentPot + Math.floor(Math.random() * 200);
+            potAmount.textContent = '$' + newPot.toLocaleString();
+
+            // 更新游戏阶段
+            const stages = ['翻牌前', '翻牌', '转牌', '河牌', '摊牌'];
+            const gameStage = document.getElementById('gameStage');
+            const currentIndex = stages.indexOf(gameStage.textContent);
+            const nextIndex = (currentIndex + 1) % stages.length;
+            gameStage.textContent = stages[nextIndex];
+        }
+
+        // 每5秒更新一次游戏信息（演示用）
+        setInterval(updateGameInfo, 5000);
+    </script>
+</body>
+</html>

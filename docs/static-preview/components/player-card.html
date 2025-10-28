@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扑克游戏 - 玩家卡片组件</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a4d3a 0%, #1a5f4a 50%, #0f3d2e 100%);
+            min-height: 100vh;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .player {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            padding: 8px;
+            min-width: 100px;
+            max-width: 120px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .player.active {
+            border-color: #4CAF50;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+        }
+
+        .player.current-turn {
+            border-color: #FFD700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .player-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .player-name {
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .player-chips {
+            font-size: 0.8em;
+            color: #4CAF50;
+        }
+
+        .demo-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            max-width: 1000px;
+        }
+
+        @media (max-width: 768px) {
+            .player {
+                min-width: 70px;
+                max-width: 90px;
+                padding: 5px;
+            }
+            
+            .player-avatar {
+                width: 35px;
+                height: 35px;
+                font-size: 1em;
+            }
+            
+            .player-name {
+                font-size: 0.7em;
+            }
+            
+            .player-chips {
+                font-size: 0.6em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <!-- 普通玩家 -->
+        <div class="player">
+            <div class="player-avatar">👤</div>
+            <div class="player-name">玩家1</div>
+            <div class="player-chips">$1,250</div>
+        </div>
+
+        <!-- 当前激活玩家 -->
+        <div class="player active">
+            <div class="player-avatar">👤</div>
+            <div class="player-name">玩家2</div>
+            <div class="player-chips">$890</div>
+        </div>
+
+        <!-- 当前回合玩家 -->
+        <div class="player current-turn">
+            <div class="player-avatar">👤</div>
+            <div class="player-name">玩家3</div>
+            <div class="player-chips">$2,100</div>
+        </div>
+
+        <!-- 普通玩家 -->
+        <div class="player">
+            <div class="player-avatar">👤</div>
+            <div class="player-name">玩家4</div>
+            <div class="player-chips">$1,650</div>
+        </div>
+    </div>
+
+    <script>
+        // 玩家卡片组件 - 可以通过 JavaScript 动态创建和更新
+        function createPlayerCard(config) {
+            const player = document.createElement('div');
+            player.className = 'player';
+            if (config.active) player.classList.add('active');
+            if (config.currentTurn) player.classList.add('current-turn');
+
+            player.innerHTML = `
+                <div class="player-avatar">${config.avatar || '👤'}</div>
+                <div class="player-name">${config.name}</div>
+                <div class="player-chips">$${config.chips}</div>
+            `;
+
+            return player;
+        }
+
+        // 示例：动态创建玩家卡片
+        // const newPlayer = createPlayerCard({
+        //     name: '新玩家',
+        //     chips: 1500,
+        //     avatar: '👤',
+        //     active: false,
+        //     currentTurn: false
+        // });
+        // document.querySelector('.demo-container').appendChild(newPlayer);
+    </script>
+</body>
+</html>
+

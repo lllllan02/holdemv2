@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扑克游戏 - 游戏页面</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a4d3a 0%, #1a5f4a 50%, #0f3d2e 100%);
+            min-height: 100vh;
+            color: white;
+            overflow: hidden;
+            padding-top: 80px;
+        }
+
+        .game-page {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            padding-top: 100px;
+            padding-bottom: 100px;
+        }
+
+        /* 顶部导航栏样式 */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            height: 80px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            font-size: 24px;
+            padding: 0 50px;
+        }
+
+        .left-section {
+            flex: 1;
+        }
+
+        .center-section {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .game-info-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .info-value.pot {
+            color: #FFD700;
+            font-size: 20px;
+        }
+
+        .right-section {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .profile-container {
+            width: 280px;
+            height: 64px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 0 15px;
+        }
+
+        .profile-image {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            object-fit: cover;
+        }
+
+        .player-information-container {
+            margin-left: 10px;
+            flex: 1;
+        }
+
+        .player-information-container h1, 
+        .player-information-container h2 {
+            margin: 2px 0;
+            font-size: 16px;
+        }
+
+        .player-information-container h2 {
+            color: rgb(199, 197, 197);
+        }
+
+        .player-information-container h1 {
+            font-size: 18px;
+            color: #4CAF50;
+        }
+
+        .chips-container {
+            display: flex;
+            align-items: center;
+            margin-top: 5px;
+        }
+
+        .chips-image {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+        }
+
+        /* 牌桌容器 */
+        .table-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        /* 牌桌样式 */
+        .poker-table {
+            position: relative;
+            width: 900px;
+            height: 500px;
+            background: linear-gradient(135deg, #0d5d47 0%, #0a4d3a 50%, #083d2e 100%);
+            border-radius: 250px;
+            border: 8px solid #8B4513;
+            box-shadow: 
+                inset 0 0 50px rgba(0, 0, 0, 0.5),
+                0 0 30px rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .table-decoration {
+            position: absolute;
+            width: 85%;
+            height: 80%;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 200px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* 玩家卡片样式 */
+        .player {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            padding: 8px;
+            min-width: 100px;
+            max-width: 120px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .player.active {
+            border-color: #4CAF50;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+        }
+
+        .player.current-turn {
+            border-color: #FFD700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .player-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .player-name {
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .player-chips {
+            font-size: 0.8em;
+            color: #4CAF50;
+        }
+
+        /* 玩家位置 */
+        /* 左侧 - 玩家1 */
+        .player-1 {
+            top: 50%;
+            left: -140px;
+            transform: translateY(-50%);
+        }
+
+        /* 左上 - 玩家2 */
+        .player-2 {
+            top: -135px;
+            left: 15%;
+        }
+
+        /* 上方中间 - 玩家3 */
+        .player-3 {
+            top: -135px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* 右上 - 玩家4 */
+        .player-4 {
+            top: -135px;
+            right: 15%;
+        }
+
+        /* 右侧 - 玩家5 */
+        .player-5 {
+            top: 50%;
+            right: -140px;
+            transform: translateY(-50%);
+        }
+
+        /* 底部操作栏样式 */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .bar-container {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* 聊天输入区域 */
+        .chat-input-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 280px;
+            max-width: 350px;
+            margin-left: auto;
+        }
+
+        .fold-section {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            flex-shrink: 0;
+        }
+
+        .betting-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .fold-section .fold-button {
+            min-width: 120px;
+        }
+
+        .betting-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            flex-shrink: 0;
+            min-width: 240px;
+        }
+
+        .action-button {
+            padding: 12px 15px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-button * {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .check-button {
+            background: linear-gradient(45deg, #4CAF50, #388E3C);
+            color: white;
+        }
+
+        .check-button:hover {
+            background: linear-gradient(45deg, #388E3C, #2E7D32);
+            transform: translateY(-2px);
+        }
+
+        .fold-button {
+            background: linear-gradient(45deg, #f44336, #d32f2f);
+            color: white;
+        }
+
+        .fold-button:hover {
+            background: linear-gradient(45deg, #d32f2f, #b71c1c);
+            transform: translateY(-2px);
+        }
+
+        .call-button {
+            background: linear-gradient(45deg, #2196F3, #1976D2);
+            color: white;
+        }
+
+        .call-button:hover {
+            background: linear-gradient(45deg, #1976D2, #1565C0);
+            transform: translateY(-2px);
+        }
+
+        .all-in-button {
+            background: linear-gradient(45deg, #FF9800, #F57C00);
+            color: white;
+            white-space: nowrap;
+            padding: 0 15px;
+        }
+
+        .all-in-button:hover {
+            background: linear-gradient(45deg, #F57C00, #EF6C00);
+            transform: translateY(-2px);
+        }
+
+        #allInAmount {
+            display: inline-block;
+            font-size: 14px;
+            font-weight: bold;
+            opacity: 0.9;
+            margin-left: 4px;
+        }
+
+        .betting-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(45deg, #9C27B0, #7B1FA2);
+            border-radius: 6px;
+            padding: 10px 15px;
+            min-width: 280px;
+            max-width: 400px;
+            height: 44px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            position: relative;
+        }
+
+        .betting-controls:hover {
+            background: linear-gradient(45deg, #7B1FA2, #6A1B9A);
+            transform: translateY(-2px);
+        }
+
+        .betting-controls:active {
+            transform: translateY(0);
+        }
+
+        .bet-amount-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .current-bet {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFD700;
+        }
+
+        .raise-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .bet-slider-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 100px;
+        }
+
+        .bet-slider-container {
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .max-bet {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-weight: bold;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .bet-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+            position: relative;
+            z-index: 2;
+        }
+
+        .bet-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+            border: 2px solid #9C27B0;
+        }
+
+        .bet-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            border: 2px solid #9C27B0;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        /* 聊天消息窗口 */
+        .chat-messages-window {
+            position: fixed;
+            right: 20px;
+            bottom: 80px;
+            width: 320px;
+            max-height: 220px;
+            background: transparent;
+            z-index: 999;
+            display: none;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .chat-messages-window.show {
+            display: flex;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-height: 120px;
+            max-height: 220px;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+
+        .chat-message {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            margin-bottom: 6px;
+        }
+
+        .chat-message.user {
+            align-items: flex-end;
+        }
+
+        .chat-message.other {
+            align-items: flex-start;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.7em;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .message-avatar {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65em;
+            color: white;
+            font-weight: bold;
+        }
+
+        .message-username {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .message-time {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9em;
+        }
+
+        .message-content {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 10px;
+            border-radius: 10px;
+            max-width: 85%;
+            word-wrap: break-word;
+            position: relative;
+            font-size: 0.8em;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.4;
+        }
+
+        .chat-message.user .message-content {
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            color: white;
+        }
+
+        .chat-message.other .message-content {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            color: white;
+        }
+
+        .message-content::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            width: 0;
+            height: 0;
+            border: 5px solid transparent;
+        }
+
+        .chat-message.user .message-content::before {
+            right: -10px;
+            border-left-color: #4CAF50;
+        }
+
+        .chat-message.other .message-content::before {
+            left: -10px;
+            border-right-color: rgba(0, 0, 0, 0.6);
+        }
+
+        .emoticon-message {
+            text-align: center;
+            padding: 8px;
+            font-size: 1.4em;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            color: white;
+            font-size: 13px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .chat-input:focus {
+            border-color: #4CAF50;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .chat-toggle-btn {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: #4CAF50;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 1.2em;
+            flex-shrink: 0;
+        }
+
+        .chat-toggle-btn:hover {
+            background: rgba(76, 175, 80, 0.3);
+            transform: scale(1.1);
+        }
+
+        .emoticon-toggle-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2em;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .emoticon-toggle-btn:hover {
+            background: rgba(76, 175, 80, 0.3);
+            border-color: #4CAF50;
+            transform: scale(1.1);
+        }
+
+        .emoticon-panel {
+            display: none;
+            position: fixed;
+            right: 20px;
+            bottom: 90px;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px;
+            max-height: 200px;
+            width: 280px;
+            overflow-y: auto;
+            z-index: 1001;
+        }
+
+        .emoticon-panel.show {
+            display: block;
+        }
+
+        .emoticon-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+        }
+
+        .emoticon-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            padding: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2em;
+            text-align: center;
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .emoticon-btn:hover {
+            background: rgba(76, 175, 80, 0.3);
+            border-color: #4CAF50;
+            transform: scale(1.1);
+        }
+
+        .emoticon-panel::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .emoticon-panel::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .emoticon-panel::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+
+        .send-button {
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+            flex-shrink: 0;
+        }
+
+        .send-button:hover {
+            background: linear-gradient(45deg, #45a049, #7cb342);
+            transform: scale(1.1);
+        }
+
+        /* 游戏日志样式 */
+        .log-container {
+            background: transparent;
+            border-radius: 10px;
+            padding: 10px 15px;
+            width: 300px;
+            position: fixed;
+            left: 20px;
+            bottom: 10px;
+            z-index: 999;
+            height: 250px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-log-section {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .log-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 3px;
+        }
+
+        .log-content::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .log-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .log-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+
+        .log-item {
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+
+        .log-player {
+            color: #4CAF50;
+            font-weight: normal;
+            font-size: 0.7em;
+        }
+
+        .log-time {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.65em;
+            margin-left: 4px;
+        }
+
+        .log-action {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.7em;
+        }
+
+        .log-amount {
+            color: #FFD700;
+            font-weight: normal;
+        }
+
+        .log-item.round-change {
+            color: #FFD700;
+            font-weight: bold;
+            font-size: 0.75em;
+            margin: 8px 0 4px 0;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .game-page {
+                padding: 15px;
+                padding-top: 80px;
+                padding-bottom: 80px;
+            }
+
+            .top-bar {
+                padding: 0 20px;
+            }
+
+            .center-section {
+                gap: 15px;
+            }
+
+            .info-label {
+                font-size: 10px;
+            }
+
+            .info-value {
+                font-size: 14px;
+            }
+
+            .info-value.pot {
+                font-size: 16px;
+            }
+
+            .bottom-bar {
+                flex-direction: column;
+            }
+
+            .bar-container {
+                position: static;
+                transform: none;
+                flex-direction: column;
+                gap: 10px;
+                width: 100%;
+            }
+
+            .fold-section {
+                position: static;
+                width: 100%;
+                order: -1;
+            }
+
+            .fold-button {
+                width: 100%;
+            }
+
+            .betting-section {
+                width: 100%;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .betting-actions {
+                width: 100%;
+            }
+
+            .betting-controls {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .poker-table {
+                width: 600px;
+                height: 350px;
+                border-radius: 175px;
+            }
+
+            .table-decoration {
+                border-radius: 150px;
+            }
+
+            .player {
+                min-width: 80px;
+                max-width: 100px;
+            }
+
+            /* 左侧 - 玩家1 */
+            .player-1 {
+                top: 50%;
+                left: -120px;
+            }
+
+            /* 左上 - 玩家2 */
+            .player-2 {
+                top: -115px;
+                left: 10%;
+            }
+
+            /* 上方中间 - 玩家3 */
+            .player-3 {
+                top: -115px;
+            }
+
+            /* 右上 - 玩家4 */
+            .player-4 {
+                top: -115px;
+                right: 10%;
+            }
+
+            /* 右侧 - 玩家5 */
+            .player-5 {
+                top: 50%;
+                right: -120px;
+            }
+
+            .log-container {
+                bottom: 10px;
+                height: 250px;
+            }
+
+            .chat-messages-window {
+                bottom: 70px;
+                width: 300px;
+                max-height: 200px;
+            }
+
+            .chat-messages {
+                max-height: 200px;
+            }
+
+            .chat-input-section {
+                min-width: 240px;
+                max-width: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 0;
+            }
+
+            .game-page {
+                top: 100px;
+                padding: 10px;
+                padding-top: 60px;
+                padding-bottom: 70px;
+            }
+
+            .top-bar {
+                height: auto;
+                flex-direction: column;
+                padding: 10px 15px;
+                gap: 10px;
+            }
+
+            .left-section {
+                display: none;
+            }
+
+            .center-section {
+                gap: 10px;
+                flex: initial;
+            }
+
+            .right-section {
+                flex: initial;
+            }
+
+            .profile-container {
+                width: 220px;
+            }
+
+            .profile-image {
+                width: 48px;
+                height: 48px;
+            }
+
+            .player-information-container h1 {
+                font-size: 16px;
+            }
+
+            .player-information-container h2 {
+                font-size: 14px;
+            }
+
+            .game-info-item {
+                gap: 3px;
+            }
+
+            .info-label {
+                font-size: 9px;
+            }
+
+            .info-value {
+                font-size: 12px;
+            }
+
+            .info-value.pot {
+                font-size: 14px;
+            }
+
+            .bottom-bar {
+                padding: 12px 15px;
+                flex-direction: column;
+            }
+
+            .bar-container {
+                position: static;
+                transform: none;
+                width: 100%;
+            }
+
+            .fold-section {
+                position: static;
+            }
+
+            .betting-actions {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
+            }
+
+            .action-button {
+                padding: 10px;
+                font-size: 12px;
+                height: 40px;
+            }
+
+            .betting-controls {
+                height: 40px;
+                padding: 8px 12px;
+                max-width: 100%;
+            }
+
+            .poker-table {
+                width: 90vw;
+                height: 45vh;
+                max-width: 500px;
+                max-height: 300px;
+                border-radius: 150px;
+            }
+
+            .table-decoration {
+                border-radius: 125px;
+            }
+
+            .player {
+                min-width: 70px;
+                max-width: 90px;
+                padding: 5px;
+            }
+
+            .player-avatar {
+                width: 35px;
+                height: 35px;
+                font-size: 1em;
+            }
+
+            .player-name {
+                font-size: 0.7em;
+            }
+
+            .player-chips {
+                font-size: 0.6em;
+            }
+
+            /* 左侧 - 玩家1 */
+            .player-1 {
+                top: 50%;
+                left: -90px;
+                transform: translateY(-50%);
+            }
+
+            /* 左上 - 玩家2 */
+            .player-2 {
+                top: -90px;
+                left: 8%;
+            }
+
+            /* 上方中间 - 玩家3 */
+            .player-3 {
+                top: -90px;
+            }
+
+            /* 右上 - 玩家4 */
+            .player-4 {
+                top: -90px;
+                right: 8%;
+            }
+
+            /* 右侧 - 玩家5 */
+            .player-5 {
+                top: 50%;
+                right: -90px;
+                transform: translateY(-50%);
+            }
+
+            .chat-messages-window {
+                width: 90vw;
+                max-width: 320px;
+                right: 10px;
+                bottom: 70px;
+                max-height: 180px;
+            }
+
+            .chat-messages {
+                max-height: 180px;
+            }
+
+            .log-container {
+                width: 260px;
+                left: 10px;
+                bottom: 10px;
+                height: 220px;
+            }
+
+            .bottom-bar {
+                flex-direction: column;
+                gap: 10px;
+                padding: 10px 15px;
+            }
+
+            .chat-input-section {
+                width: 100%;
+                max-width: 100%;
+                order: -1;
+            }
+
+            .bar-container {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <div class="top-bar">
+        <!-- 左侧区域 (占位) -->
+        <div class="left-section"></div>
+
+        <!-- 中间区域 (游戏信息) -->
+        <div class="center-section">
+            <div class="game-info-item">
+                <span class="info-label">底池</span>
+                <span class="info-value pot" id="topPotAmount">$2,450</span>
+            </div>
+            <div class="game-info-item">
+                <span class="info-label">玩家</span>
+                <span class="info-value" id="topPlayerCount">5人</span>
+            </div>
+            <div class="game-info-item">
+                <span class="info-label">阶段</span>
+                <span class="info-value" id="topGameStage">翻牌前</span>
+            </div>
+        </div>
+
+        <!-- 右侧区域 (玩家信息) -->
+        <div class="right-section">
+            <div class="profile-container">
+                <img class="profile-image" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTYiIGhlaWdodD0iNTYiIHZpZXdCb3g9IjAgMCA1NiA1NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjgiIGN5PSIyOCIgcj0iMjgiIGZpbGw9IiM0Q0FGNTAiLz4KPHN2ZyB4PSIxNCIgeT0iMTQiIHdpZHRoPSIyOCIgaGVpZ2h0PSIyOCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwODYgMTQuMjA5MSA0IDEyIDRDOS43OTA4NiA0IDggNS43OTA4NiA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC42ODYyOSAxNCA2IDE2LjY4NjMgNiAyMFYyMkgxOFYyMEMxOCAxNi42ODYzIDE1LjMxMzcgMTQgMTIgMTRaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4KPC9zdmc+" alt="用户头像">
+                <div class="player-information-container">
+                    <h2>扑克高手</h2>
+                    <div class="chips-container">
+                        <img class="chips-image" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTAiIGN5PSIxMCIgcj0iMTAiIGZpbGw9IiNGRkQ3MDAiLz4KPHN2ZyB4PSI1IiB5PSI1IiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMCAxMCIgZmlsbD0ibm9uZSI+Cjx0ZXh0IHg9IjUiIHk9IjciIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI4IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+JDwvdGV4dD4KPC9zdmc+Cjwvc3ZnPg==" alt="筹码">
+                        <h1 class="chips-value">1,250,000</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="game-page">
+        <!-- 牌桌容器 -->
+        <div class="table-container">
+            <!-- 牌桌 -->
+            <div class="poker-table">
+                <div class="table-decoration"></div>
+
+                <!-- 玩家卡片 -->
+                <div class="player player-1">
+                    <div class="player-avatar">👤</div>
+                    <div class="player-name">玩家1</div>
+                    <div class="player-chips">$1,250</div>
+                </div>
+
+                <div class="player player-2 active">
+                    <div class="player-avatar">👤</div>
+                    <div class="player-name">玩家2</div>
+                    <div class="player-chips">$890</div>
+                </div>
+
+                <div class="player player-3 current-turn">
+                    <div class="player-avatar">👤</div>
+                    <div class="player-name">玩家3</div>
+                    <div class="player-chips">$2,100</div>
+                </div>
+
+                <div class="player player-4">
+                    <div class="player-avatar">👤</div>
+                    <div class="player-name">玩家4</div>
+                    <div class="player-chips">$1,650</div>
+                </div>
+
+                <div class="player player-5">
+                    <div class="player-avatar">👤</div>
+                    <div class="player-name">玩家5</div>
+                    <div class="player-chips">$750</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 游戏日志 (左下角) -->
+        <div class="log-container">
+            <div class="game-log-section">
+                <div class="log-content" id="logContent">
+                    <div class="log-item round-change">
+                        <span class="log-time">14:35:00</span> === 翻牌前 ===
+                    </div>
+                    <div class="log-item">
+                        <span class="log-time">14:35:08</span>
+                        <span class="log-player">玩家5</span>
+                        <span class="log-action"> 全下 <span class="log-amount">$500</span></span>
+                    </div>
+                    <div class="log-item">
+                        <span class="log-time">14:35:12</span>
+                        <span class="log-player">玩家1</span>
+                        <span class="log-action"> 弃牌</span>
+                    </div>
+                    <div class="log-item">
+                        <span class="log-time">14:35:15</span>
+                        <span class="log-player">玩家2</span>
+                        <span class="log-action"> 下注 <span class="log-amount">$25</span></span>
+                    </div>
+                    <div class="log-item">
+                        <span class="log-time">14:35:18</span>
+                        <span class="log-player">玩家4</span>
+                        <span class="log-action"> 加注到 <span class="log-amount">$100</span></span>
+                    </div>
+                    <div class="log-item">
+                        <span class="log-time">14:35:22</span>
+                        <span class="log-player">玩家3</span>
+                        <span class="log-action"> 跟注 <span class="log-amount">$50</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 聊天消息窗口 -->
+        <div class="chat-messages-window" id="chatMessagesWindow">
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-message other">
+                    <div class="message-header">
+                        <div class="message-avatar">P2</div>
+                        <div class="message-username">玩家2</div>
+                        <div class="message-time">14:32</div>
+                    </div>
+                    <div class="message-content">大家好！</div>
+                </div>
+                <div class="chat-message other">
+                    <div class="message-header">
+                        <div class="message-avatar">P3</div>
+                        <div class="message-username">玩家3</div>
+                        <div class="message-time">14:33</div>
+                    </div>
+                    <div class="message-content">运气不错啊</div>
+                </div>
+                <div class="chat-message user">
+                    <div class="message-header">
+                        <div class="message-avatar">我</div>
+                        <div class="message-username">我</div>
+                        <div class="message-time">14:34</div>
+                    </div>
+                    <div class="message-content">这把稳了</div>
+                </div>
+                <div class="chat-message other">
+                    <div class="message-header">
+                        <div class="message-avatar">P4</div>
+                        <div class="message-username">玩家4</div>
+                        <div class="message-time">14:35</div>
+                    </div>
+                    <div class="message-content">加油！ 💪</div>
+                </div>
+                <div class="chat-message other">
+                    <div class="message-header">
+                        <div class="message-avatar">P5</div>
+                        <div class="message-username">玩家5</div>
+                        <div class="message-time">14:36</div>
+                    </div>
+                    <div class="message-content emoticon-message">😄</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部操作栏 -->
+        <div class="bottom-bar">
+            <!-- 弃牌按钮区域 -->
+            <div class="fold-section">
+                <button class="action-button fold-button" onclick="fold()">弃牌</button>
+            </div>
+
+            <div class="bar-container">
+                <!-- 下注操作区 -->
+                <div class="betting-section">
+                    <!-- 操作按钮 -->
+                    <div class="betting-actions">
+                        <button class="action-button check-button" onclick="check()">过牌</button>
+                        <button class="action-button call-button" onclick="call()">跟注 $50</button>
+                    </div>
+
+                    <!-- 加注控制 -->
+                    <div class="betting-controls" onclick="raise()">
+                        <div class="bet-amount-display">
+                            <span class="current-bet" id="currentBet">$50</span>
+                            <span class="raise-label">加注</span>
+                        </div>
+                        <div class="bet-slider-wrapper">
+                            <div class="bet-slider-container">
+                                <input type="range" class="bet-slider" id="betSlider" min="0" max="1250" value="50" oninput="updateBetAmount(this.value)" onclick="event.stopPropagation()">
+                            </div>
+                            <span class="max-bet">最大: $1,250</span>
+                        </div>
+                    </div>
+
+                    <!-- 梭哈按钮 -->
+                    <button class="action-button all-in-button" onclick="allIn()">梭哈<span id="allInAmount"> $1,250</span></button>
+                </div>
+            </div>
+
+            <!-- 聊天输入区域 -->
+            <div class="chat-input-section">
+                <button class="chat-toggle-btn" onclick="toggleChatWindow()" title="打开聊天">
+                    💬
+                </button>
+                <input type="text" class="chat-input" id="chatInput" placeholder="输入消息..." maxlength="200" onkeypress="handleChatKeyPress(event)">
+                <button class="emoticon-toggle-btn" onclick="toggleEmoticons()" id="emoticonToggleBtn" title="表情">
+                    <span id="emoticonIcon">😊</span>
+                </button>
+                <button class="send-button" onclick="sendMessage()" title="发送">
+                    ➤
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 表情面板 -->
+    <div class="emoticon-panel" id="emoticonPanel">
+        <div class="emoticon-grid">
+            <button class="emoticon-btn" onclick="sendEmoticon('😊')">😊</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('😂')">😂</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('😎')">😎</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('🤔')">🤔</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('😤')">😤</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('😢')">😢</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('😍')">😍</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('🤗')">🤗</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('😴')">😴</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('🤯')">🤯</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('😡')">😡</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('🥳')">🥳</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('🎉')">🎉</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('🍀')">🍀</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('💪')">💪</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('👍')">👍</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('👎')">👎</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('👏')">👏</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('🙌')">🙌</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('🤝')">🤝</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('💯')">💯</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('🔥')">🔥</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('⭐')">⭐</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('🎯')">🎯</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('🏆')">🏆</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('💰')">💰</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('🎲')">🎲</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('🃏')">🃏</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('♠️')">♠️</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('♥️')">♥️</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('♦️')">♦️</button>
+            <button class="emoticon-btn" onclick="sendEmoticon('♣️')">♣️</button>
+        </div>
+    </div>
+
+    <script>
+        // 下注相关
+        let currentBet = 50;
+        let playerBalance = 1250;
+
+        function updateBetAmount(value) {
+            currentBet = parseInt(value);
+            document.getElementById('currentBet').textContent = `$${currentBet}`;
+        }
+
+        function updateAllInButton() {
+            document.getElementById('allInAmount').textContent = ` $${playerBalance.toLocaleString()}`;
+        }
+
+        function check() {
+            addLogEntry('我', '过牌');
+        }
+
+        function fold() {
+            addLogEntry('我', '弃牌');
+        }
+
+        function call() {
+            const callAmount = 50;
+            if (callAmount <= playerBalance) {
+                playerBalance -= callAmount;
+                updateAllInButton();
+                addLogEntry('我', '跟注', callAmount);
+            }
+        }
+
+        function raise() {
+            if (currentBet > 50 && currentBet <= playerBalance) {
+                playerBalance -= currentBet;
+                updateAllInButton();
+                addLogEntry('我', '加注到', currentBet);
+            }
+        }
+
+        function allIn() {
+            if (playerBalance > 0) {
+                const allInAmount = playerBalance;
+                currentBet = playerBalance;
+                playerBalance = 0;
+                document.getElementById('betSlider').value = currentBet;
+                document.getElementById('currentBet').textContent = `$${currentBet}`;
+                updateAllInButton();
+                addLogEntry('我', '梭哈', allInAmount);
+            }
+        }
+
+        // 聊天相关
+        function toggleChatWindow() {
+            const window = document.getElementById('chatMessagesWindow');
+            window.classList.toggle('show');
+        }
+
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (message) {
+                addChatMessage('我', message, false);
+                input.value = '';
+                // 自动打开聊天窗口
+                const window = document.getElementById('chatMessagesWindow');
+                if (!window.classList.contains('show')) {
+                    window.classList.add('show');
+                }
+            }
+        }
+
+        // 切换表情面板
+        function toggleEmoticons() {
+            const panel = document.getElementById('emoticonPanel');
+            const icon = document.getElementById('emoticonIcon');
+            
+            if (panel.classList.contains('show')) {
+                panel.classList.remove('show');
+                icon.textContent = '😊';
+            } else {
+                panel.classList.add('show');
+                icon.textContent = '✕';
+            }
+        }
+
+        // 发送表情符号
+        function sendEmoticon(emoticon) {
+            addChatMessage('我', emoticon, true);
+            
+            // 发送后自动收起面板
+            const panel = document.getElementById('emoticonPanel');
+            const icon = document.getElementById('emoticonIcon');
+            panel.classList.remove('show');
+            icon.textContent = '😊';
+            
+            // 自动打开聊天窗口
+            const window = document.getElementById('chatMessagesWindow');
+            if (!window.classList.contains('show')) {
+                window.classList.add('show');
+            }
+        }
+
+        function addChatMessage(username, content, isEmoticon = false) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message user';
+            
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+            
+            const contentClass = isEmoticon ? 'emoticon-message' : '';
+            const avatarText = username === '我' ? '我' : username.charAt(0);
+            
+            messageDiv.innerHTML = `
+                <div class="message-header">
+                    <div class="message-avatar">${avatarText}</div>
+                    <div class="message-username">${username}</div>
+                    <div class="message-time">${timeString}</div>
+                </div>
+                <div class="message-content ${contentClass}">${content}</div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // 游戏日志相关
+        function addLogEntry(playerName, action, amount = '') {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            
+            const logContent = document.getElementById('logContent');
+            const logItem = document.createElement('div');
+            logItem.className = 'log-item';
+            
+            let actionText = action;
+            if (amount) {
+                actionText = `${action} <span class="log-amount">$${amount}</span>`;
+            }
+            
+            logItem.innerHTML = `
+                <span class="log-time">${timeString}</span>
+                <span class="log-player">${playerName}</span>
+                <span class="log-action"> ${actionText}</span>
+            `;
+            
+            logContent.appendChild(logItem);
+            
+            if (logContent.children.length > 20) {
+                logContent.removeChild(logContent.firstChild);
+            }
+            
+            logContent.scrollTop = logContent.scrollHeight;
+        }
+
+        // 顶部栏游戏信息更新
+        function updateTopGameInfo() {
+            // 更新底池（模拟）
+            const topPotAmount = document.getElementById('topPotAmount');
+            const currentPot = parseInt(topPotAmount.textContent.replace('$', '').replace(',', ''));
+            const newPot = currentPot + Math.floor(Math.random() * 200);
+            topPotAmount.textContent = '$' + newPot.toLocaleString();
+
+            // 更新游戏阶段（模拟循环）
+            const stages = ['翻牌前', '翻牌', '转牌', '河牌', '摊牌'];
+            const gameStage = document.getElementById('topGameStage');
+            const currentIndex = stages.indexOf(gameStage.textContent);
+            const nextIndex = (currentIndex + 1) % stages.length;
+            gameStage.textContent = stages[nextIndex];
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAllInButton();
+            
+            // 默认打开聊天窗口
+            const chatWindow = document.getElementById('chatMessagesWindow');
+            if (chatWindow) {
+                chatWindow.classList.add('show');
+            }
+            
+            // 每8秒更新一次顶部游戏信息（演示用）
+            setInterval(updateTopGameInfo, 8000);
+        });
+
+        // 添加按钮点击效果
+        const actionButtons = document.querySelectorAll('.action-button');
+        actionButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'translateY(-2px)';
+                }, 150);
+            });
+        });
+
+        // 点击外部关闭表情面板
+        document.addEventListener('click', function(event) {
+            const panel = document.getElementById('emoticonPanel');
+            const toggleBtn = document.getElementById('emoticonToggleBtn');
+            
+            if (panel && toggleBtn && panel.classList.contains('show') && 
+                !panel.contains(event.target) && 
+                !toggleBtn.contains(event.target)) {
+                panel.classList.remove('show');
+                document.getElementById('emoticonIcon').textContent = '😊';
+            }
+        });
+    </script>
+</body>
+</html>
+

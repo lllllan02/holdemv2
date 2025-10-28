@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扑克游戏 - 牌桌组件</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a4d3a 0%, #1a5f4a 50%, #0f3d2e 100%);
+            min-height: 100vh;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .poker-table {
+            position: relative;
+            width: 900px;
+            height: 500px;
+            background: linear-gradient(135deg, #0d5d47 0%, #0a4d3a 50%, #083d2e 100%);
+            border-radius: 250px;
+            border: 8px solid #8B4513;
+            box-shadow: 
+                inset 0 0 50px rgba(0, 0, 0, 0.5),
+                0 0 30px rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+
+        /* 桌面装饰线 */
+        .table-decoration {
+            position: absolute;
+            width: 85%;
+            height: 80%;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 200px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @media (max-width: 768px) {
+            .poker-table {
+                width: 95vw;
+                height: 50vh;
+                max-width: 600px;
+                max-height: 350px;
+                border-radius: 175px;
+            }
+
+            .table-decoration {
+                border-radius: 150px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .poker-table {
+                width: 95vw;
+                height: 40vh;
+                max-width: 400px;
+                max-height: 250px;
+                border-radius: 125px;
+            }
+
+            .table-decoration {
+                border-radius: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="poker-table">
+        <!-- 装饰线 -->
+        <div class="table-decoration"></div>
+    </div>
+
+    <script>
+        // 牌桌组件 - 可以通过 JavaScript 进行自定义
+        function customizeTable(options) {
+            const table = document.querySelector('.poker-table');
+
+            if (options.width) {
+                table.style.width = options.width;
+            }
+            if (options.height) {
+                table.style.height = options.height;
+            }
+            if (options.borderRadius) {
+                table.style.borderRadius = options.borderRadius;
+            }
+            if (options.backgroundColor) {
+                table.style.background = options.backgroundColor;
+            }
+        }
+
+        // 示例：自定义牌桌
+        // customizeTable({
+        //     width: '1000px',
+        //     height: '600px',
+        //     borderRadius: '300px',
+        //     backgroundColor: 'linear-gradient(135deg, #1a5f4a 0%, #0a4d3a 50%, #083d2e 100%)'
+        // });
+    </script>
+</body>
+</html>
+

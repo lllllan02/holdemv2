@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扑克游戏 - 游戏日志</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .log-container {
+            background: transparent;
+            border-radius: 10px;
+            padding: 15px;
+            width: 300px;
+            position: fixed;
+            left: 20px;
+            bottom: 20px;
+            z-index: 1000;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 游戏日志样式 */
+        .game-log-section {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .log-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 3px;
+        }
+
+        .log-content::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .log-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .log-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+
+        .log-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .log-item {
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+
+        .log-player {
+            color: #4CAF50;
+            font-weight: normal;
+            font-size: 0.7em;
+        }
+
+        .log-time {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.65em;
+            margin-left: 4px;
+        }
+
+        .log-action {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.7em;
+        }
+
+        .log-amount {
+            color: #FFD700;
+            font-weight: normal;
+        }
+
+        .log-item.round-change {
+            color: #FFD700;
+            font-weight: bold;
+            font-size: 0.75em;
+            margin: 8px 0 4px 0;
+        }
+
+        @media (max-width: 768px) {
+            .log-container {
+                width: 260px;
+                left: 10px;
+                bottom: 20px;
+                height: 350px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="log-container">
+        <!-- 游戏日志区域 -->
+        <div class="game-log-section">
+            <div class="log-content" id="logContent">
+                <div class="log-item round-change">
+                    <span class="log-time">14:35:00</span> === 翻牌前 ===
+                </div>
+
+                <div class="log-item">
+                    <span class="log-time">14:35:08</span>
+                    <span class="log-player">牌局之王</span>
+                    <span class="log-action"> 全下 <span class="log-amount">$500</span></span>
+                </div>
+
+                <div class="log-item">
+                    <span class="log-time">14:35:12</span>
+                    <span class="log-player">新手玩家</span>
+                    <span class="log-action"> 弃牌</span>
+                </div>
+
+                <div class="log-item">
+                    <span class="log-time">14:35:15</span>
+                    <span class="log-player">幸运玩家</span>
+                    <span class="log-action"> 下注 <span class="log-amount">$25</span></span>
+                </div>
+
+                <div class="log-item">
+                    <span class="log-time">14:35:18</span>
+                    <span class="log-player">德州高手</span>
+                    <span class="log-action"> 加注到 <span class="log-amount">$100</span></span>
+                </div>
+
+                <div class="log-item">
+                    <span class="log-time">14:35:22</span>
+                    <span class="log-player">扑克大师</span>
+                    <span class="log-action"> 跟注 <span class="log-amount">$50</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let logCount = 5;
+        let autoScroll = true;
+        let logInterval;
+
+        // 添加新的流程记录
+        function addLogEntry(playerName, action, amount = '') {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            
+            const logContent = document.getElementById('logContent');
+            const logItem = document.createElement('div');
+            
+            // 根据动作类型设置样式类
+            let actionClass = 'call';
+            if (action.includes('弃牌')) actionClass = 'fold';
+            else if (action.includes('加注')) actionClass = 'raise';
+            else if (action.includes('全下')) actionClass = 'all-in';
+            else if (action.includes('过牌')) actionClass = 'check';
+            else if (action.includes('下注')) actionClass = 'bet';
+            
+            logItem.className = `log-item ${actionClass}`;
+            
+            let actionText = action;
+            if (amount) {
+                actionText = action.replace('$', `<span class="log-amount">$${amount}</span>`);
+            }
+            
+            logItem.innerHTML = `
+                <span class="log-time">${timeString}</span>
+                <span class="log-player">${playerName}</span>
+                <span class="log-action"> ${actionText}</span>
+            `;
+            
+            // 插入到底部
+            logContent.appendChild(logItem);
+            
+            // 限制记录数量，保持最多20条
+            if (logContent.children.length > 20) {
+                logContent.removeChild(logContent.firstChild);
+            } else {
+                logCount++;
+            }
+            
+            // 自动滚动到底部
+            if (autoScroll) {
+                logContent.scrollTop = logContent.scrollHeight;
+            }
+        }
+
+        // 模拟游戏流程更新
+        function simulateGameActions() {
+            const players = ['扑克大师', '德州高手', '幸运玩家', '新手玩家', '牌局之王', '扑克新手', '德州老手'];
+            const actions = [
+                { action: '弃牌' },
+                { action: '跟注 $', amount: Math.floor(Math.random() * 200) + 50 },
+                { action: '加注到 $', amount: Math.floor(Math.random() * 500) + 100 },
+                { action: '下注 $', amount: Math.floor(Math.random() * 100) + 25 },
+                { action: '全下 $', amount: Math.floor(Math.random() * 1000) + 500 },
+                { action: '过牌' },
+            ];
+            
+            const randomPlayer = players[Math.floor(Math.random() * players.length)];
+            const randomAction = actions[Math.floor(Math.random() * actions.length)];
+            
+            addLogEntry(randomPlayer, randomAction.action, randomAction.amount);
+        }
+
+        // 开始模拟
+        function startSimulation() {
+            if (logInterval) clearInterval(logInterval);
+            logInterval = setInterval(simulateGameActions, 6000);
+        }
+
+        // 停止模拟
+        function stopSimulation() {
+            if (logInterval) {
+                clearInterval(logInterval);
+                logInterval = null;
+            }
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            startSimulation();
+        });
+
+        // 页面卸载时清理定时器
+        window.addEventListener('beforeunload', function() {
+            stopSimulation();
+        });
+    </script>
+</body>
+</html>

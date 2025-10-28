@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扑克游戏 - 聊天组件</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: transparent;
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .chat-container {
+            background: rgba(0, 0, 0, 0.85);
+            border-radius: 10px;
+            width: 300px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .chat-container.collapsed {
+            height: auto;
+        }
+
+        .chat-container.expanded {
+            height: 400px;
+        }
+
+        .chat-header {
+            background: rgba(76, 175, 80, 0.2);
+            padding: 10px 15px;
+            border-radius: 10px 10px 0 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .chat-header:hover {
+            background: rgba(76, 175, 80, 0.3);
+        }
+
+        .collapse-icon {
+            font-size: 0.9em;
+            transition: transform 0.3s ease;
+        }
+
+        .chat-container.collapsed .collapse-icon {
+            transform: rotate(180deg);
+        }
+
+        .chat-title {
+            font-size: 1em;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+
+        .chat-content {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .chat-container.collapsed .chat-messages {
+            display: none;
+        }
+
+        .message {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .message.system {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-style: italic;
+            font-size: 0.8em;
+        }
+
+        .message.user {
+            align-items: flex-end;
+        }
+
+        .message.other {
+            align-items: flex-start;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.7em;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .message-avatar {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6em;
+        }
+
+        .message-username {
+            font-weight: bold;
+        }
+
+        .message-time {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .message-content {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 10px;
+            border-radius: 10px;
+            max-width: 85%;
+            word-wrap: break-word;
+            position: relative;
+            font-size: 0.85em;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            color: white;
+        }
+
+        .message.other .message-content {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .message-content::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            width: 0;
+            height: 0;
+            border: 6px solid transparent;
+        }
+
+        .message.user .message-content::before {
+            right: -12px;
+            border-left-color: #4CAF50;
+        }
+
+        .message.other .message-content::before {
+            left: -12px;
+            border-right-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .emoticon-message {
+            text-align: center;
+            padding: 8px;
+        }
+
+        .emoticon-toggle-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2em;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .emoticon-toggle-btn:hover {
+            background: rgba(76, 175, 80, 0.3);
+            border-color: #4CAF50;
+            transform: scale(1.1);
+        }
+
+        .emoticon-panel {
+            display: none;
+            padding: 8px 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .emoticon-panel.show {
+            display: block;
+        }
+
+        .emoticon-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 4px;
+        }
+
+        .emoticon-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            padding: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+            text-align: center;
+            min-height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .emoticon-btn:hover {
+            background: rgba(76, 175, 80, 0.3);
+            border-color: #4CAF50;
+            transform: scale(1.1);
+        }
+
+        .chat-input-container {
+            padding: 10px 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            color: white;
+            font-size: 12px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input:focus {
+            border-color: #4CAF50;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .chat-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .send-button {
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 1.2em;
+        }
+
+        .send-button:hover {
+            background: linear-gradient(45deg, #45a049, #7cb342);
+            transform: scale(1.1);
+        }
+
+        .send-button:disabled {
+            background: rgba(255, 255, 255, 0.2);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+
+
+        @media (max-width: 480px) {
+            .chat-container {
+                height: 500px;
+                max-width: 100%;
+            }
+            
+            .quick-emoticons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container expanded" id="chatContainer">
+        <div class="chat-header" onclick="toggleChat()">
+            <div class="chat-title">💬 游戏聊天</div>
+            <span class="collapse-icon">▼</span>
+        </div>
+
+        <div class="chat-content">
+            <div class="chat-messages" id="chatMessages">
+            <div class="message other">
+                <div class="message-header">
+                    <div class="message-avatar">P</div>
+                    <div class="message-username">扑克大师</div>
+                    <div class="message-time">14:32</div>
+                </div>
+                <div class="message-content">大家好！准备开始新的一局吗？</div>
+            </div>
+
+            <div class="message user">
+                <div class="message-header">
+                    <div class="message-avatar">我</div>
+                    <div class="message-username">我</div>
+                    <div class="message-time">14:33</div>
+                </div>
+                <div class="message-content">当然！我已经准备好了 🎯</div>
+            </div>
+
+            <div class="message other">
+                <div class="message-header">
+                    <div class="message-avatar">T</div>
+                    <div class="message-username">德州高手</div>
+                    <div class="message-time">14:33</div>
+                </div>
+                <div class="message-content">这局我要大显身手！</div>
+            </div>
+
+            <div class="message other">
+                <div class="message-header">
+                    <div class="message-avatar">L</div>
+                    <div class="message-username">幸运玩家</div>
+                    <div class="message-time">14:34</div>
+                </div>
+                <div class="message-content">🍀</div>
+            </div>
+
+            <div class="message other">
+                <div class="message-header">
+                    <div class="message-avatar">N</div>
+                    <div class="message-username">新手玩家</div>
+                    <div class="message-time">14:35</div>
+                </div>
+                <div class="message-content">第一次玩，请多指教！</div>
+            </div>
+
+            <div class="message user">
+                <div class="message-header">
+                    <div class="message-avatar">我</div>
+                    <div class="message-username">我</div>
+                    <div class="message-time">14:35</div>
+                </div>
+                <div class="message-content">加油！😊</div>
+            </div>
+        </div>
+
+            <div class="chat-input-container">
+                <div class="chat-input-wrapper">
+                    <input type="text" class="chat-input" id="chatInput" placeholder="输入消息..." maxlength="200" onkeypress="handleKeyPress(event)">
+                    <button class="emoticon-toggle-btn" onclick="toggleEmoticons()" id="emoticonToggleBtn">
+                        <span id="emoticonIcon">😊</span>
+                    </button>
+                    <button class="send-button" id="sendButton" onclick="sendMessage()">
+                        ➤
+                    </button>
+                </div>
+            </div>
+
+            <div class="emoticon-panel" id="emoticonPanel">
+            <div class="emoticon-grid">
+                <button class="emoticon-btn" onclick="sendEmoticon('😊')">😊</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('😂')">😂</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('😎')">😎</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('🤔')">🤔</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('😤')">😤</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('😢')">😢</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('😍')">😍</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('🤗')">🤗</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('😴')">😴</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('🤯')">🤯</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('😡')">😡</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('🥳')">🥳</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('🎉')">🎉</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('🍀')">🍀</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('💪')">💪</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('👍')">👍</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('👎')">👎</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('👏')">👏</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('🙌')">🙌</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('🤝')">🤝</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('💯')">💯</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('🔥')">🔥</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('⭐')">⭐</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('🎯')">🎯</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('🏆')">🏆</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('💰')">💰</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('🎲')">🎲</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('🃏')">🃏</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('♠️')">♠️</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('♥️')">♥️</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('♦️')">♦️</button>
+                <button class="emoticon-btn" onclick="sendEmoticon('♣️')">♣️</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const sendButton = document.getElementById('sendButton');
+
+        // 切换聊天折叠状态
+        function toggleChat() {
+            const container = document.getElementById('chatContainer');
+            if (container.classList.contains('expanded')) {
+                container.classList.remove('expanded');
+                container.classList.add('collapsed');
+            } else {
+                container.classList.remove('collapsed');
+                container.classList.add('expanded');
+            }
+        }
+
+        // 发送消息
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (message) {
+                addMessage('user', '我', message);
+                chatInput.value = '';
+                updateSendButton();
+                
+                // 模拟其他玩家回复
+                setTimeout(() => {
+                    simulateOtherPlayerMessage();
+                }, 2000);
+            }
+        }
+
+        // 切换表情面板
+        function toggleEmoticons() {
+            const panel = document.getElementById('emoticonPanel');
+            const icon = document.getElementById('emoticonIcon');
+            
+            if (panel.classList.contains('show')) {
+                panel.classList.remove('show');
+                icon.textContent = '😊';
+            } else {
+                panel.classList.add('show');
+                icon.textContent = '✕';
+            }
+        }
+
+        // 发送表情符号
+        function sendEmoticon(emoticon) {
+            addMessage('user', '我', emoticon, true);
+            
+            // 发送后自动收起面板
+            const panel = document.getElementById('emoticonPanel');
+            const icon = document.getElementById('emoticonIcon');
+            panel.classList.remove('show');
+            icon.textContent = '😊';
+            
+            // 模拟其他玩家回复表情
+            setTimeout(() => {
+                const responses = ['😊', '😂', '👍', '🎉', '🍀', '💪', '👏', '🔥'];
+                const randomEmoticon = responses[Math.floor(Math.random() * responses.length)];
+                addMessage('other', '扑克大师', randomEmoticon, true);
+            }, 1500);
+        }
+
+        // 添加消息到聊天
+        function addMessage(type, username, content, isEmoticon = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+            
+            if (type === 'system') {
+                messageDiv.innerHTML = `
+                    <div class="message-content">${content}</div>
+                `;
+            } else {
+                const contentClass = isEmoticon ? 'emoticon-message' : '';
+                messageDiv.innerHTML = `
+                    <div class="message-header">
+                        <div class="message-avatar">${username.charAt(0)}</div>
+                        <div class="message-username">${username}</div>
+                        <div class="message-time">${timeString}</div>
+                    </div>
+                    <div class="message-content ${contentClass}">${content}</div>
+                `;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // 模拟其他玩家消息
+        function simulateOtherPlayerMessage() {
+            const messages = [
+                '这手牌不错！',
+                '加注！',
+                '我跟注',
+                '弃牌了',
+                '好牌！',
+                '运气不错',
+                '继续！',
+                '加油！'
+            ];
+            
+            const players = ['扑克大师', '德州高手', '幸运玩家', '新手玩家', '牌局之王'];
+            const randomPlayer = players[Math.floor(Math.random() * players.length)];
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            
+            addMessage('other', randomPlayer, randomMessage);
+        }
+
+        // 处理回车键发送
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // 更新发送按钮状态
+        function updateSendButton() {
+            sendButton.disabled = !chatInput.value.trim();
+        }
+
+        // 输入框事件监听
+        chatInput.addEventListener('input', updateSendButton);
+
+        // 点击外部关闭表情面板
+        document.addEventListener('click', function(event) {
+            const panel = document.getElementById('emoticonPanel');
+            const toggleBtn = document.getElementById('emoticonToggleBtn');
+            
+            if (panel.classList.contains('show') && 
+                !panel.contains(event.target) && 
+                !toggleBtn.contains(event.target)) {
+                panel.classList.remove('show');
+                document.getElementById('emoticonIcon').textContent = '😊';
+            }
+        });
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSendButton();
+            
+        });
+
+        // 添加消息点击效果
+        const messageElements = document.querySelectorAll('.message-content');
+        messageElements.forEach(message => {
+            message.addEventListener('click', function() {
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+            });
+        });
+    </script>
+</body>
+</html>

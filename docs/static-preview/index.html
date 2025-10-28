@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扑克游戏 - 静态预览</title>
+    <link rel="stylesheet" href="assets/css/common.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .header h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #4CAF50, #8BC34A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .section {
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 2.2em;
+            color: #4CAF50;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A, #FFD700);
+            border-radius: 2px;
+        }
+
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .component-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .component-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A, #FFD700);
+        }
+
+        .component-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .component-card h3 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            color: #4CAF50;
+        }
+
+        .component-card p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        .component-card .features {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+
+        .component-card .features li {
+            padding: 5px 0;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .component-card .features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .preview-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            color: white;
+            text-decoration: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .preview-button:hover {
+            background: linear-gradient(45deg, #45a049, #7cb342);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .tech-stack {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .tech-stack h3 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .tech-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .tech-item {
+            background: rgba(76, 175, 80, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            font-size: 0.9em;
+        }
+
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .instructions h3 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .instructions ol {
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .instructions code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5em;
+            }
+            
+            .header p {
+                font-size: 1.1em;
+            }
+            
+            .section-title {
+                font-size: 1.8em;
+            }
+            
+            .components-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .component-card {
+                padding: 20px;
+            }
+            
+            .tech-list {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🃏 扑克游戏静态预览</h1>
+            <p>这是一个多人扑克游戏项目的静态HTML预览页面集合。你可以在这里查看游戏的主要界面组件和页面设计，无需启动完整的开发环境。</p>
+        </div>
+
+        <!-- 页面分组 -->
+        <div class="section">
+            <h2 class="section-title">📄 页面文件</h2>
+            <div class="components-grid">
+                <div class="component-card">
+                    <h3>🃏 游戏页面</h3>
+                    <p>完整的扑克游戏界面，集成了所有组件的游戏页面。</p>
+                    <ul class="features">
+                        <li>牌桌和玩家位置</li>
+                        <li>底部操作栏</li>
+                        <li>聊天和日志组件</li>
+                        <li>完整交互功能</li>
+                        <li>响应式设计</li>
+                    </ul>
+                    <a href="pages/game.html" class="preview-button">查看游戏页面</a>
+                </div>
+
+                <div class="component-card">
+                    <h3>🎨 背景加载页面</h3>
+                    <p>游戏启动时的背景页面，包含加载动画和视觉元素。</p>
+                    <ul class="features">
+                        <li>动态渐变背景</li>
+                        <li>浮动卡片动画</li>
+                        <li>加载进度条</li>
+                        <li>平滑过渡效果</li>
+                    </ul>
+                    <a href="pages/background.html" class="preview-button">查看背景页面</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 组件分组 -->
+        <div class="section">
+            <h2 class="section-title">🧩 组件文件</h2>
+            <div class="components-grid">
+                <div class="component-card">
+                    <h3>🎮 顶部导航栏</h3>
+                    <p>游戏界面的顶部控制栏，包含用户信息、游戏控制按钮和设置选项。</p>
+                    <ul class="features">
+                        <li>用户头像和筹码显示</li>
+                        <li>游戏控制按钮</li>
+                        <li>音频开关功能</li>
+                        <li>响应式设计</li>
+                    </ul>
+                    <a href="components/topbar.html" class="preview-button">查看导航栏</a>
+                </div>
+
+                <div class="component-card">
+                    <h3>📱 底部导航栏</h3>
+                    <p>游戏界面底部的控制栏，包含快速聊天和游戏信息。</p>
+                    <ul class="features">
+                        <li>快速聊天功能</li>
+                        <li>游戏信息显示</li>
+                        <li>设置面板</li>
+                        <li>倒计时器</li>
+                    </ul>
+                    <a href="components/bottom-bar.html" class="preview-button">查看底部导航栏</a>
+                </div>
+
+                <div class="component-card">
+                    <h3>📜 游戏日志</h3>
+                    <p>游戏流程记录组件，显示玩家操作历史和游戏状态变化。</p>
+                    <ul class="features">
+                        <li>实时操作记录</li>
+                        <li>时间戳显示</li>
+                        <li>玩家动作追踪</li>
+                        <li>自动滚动更新</li>
+                        <li>透明背景设计</li>
+                    </ul>
+                    <a href="components/game-log.html" class="preview-button">查看游戏日志</a>
+                </div>
+
+                <div class="component-card">
+                    <h3>💬 聊天组件</h3>
+                    <p>游戏内聊天功能，支持文字消息和表情符号。</p>
+                    <ul class="features">
+                        <li>实时消息显示</li>
+                        <li>表情符号支持</li>
+                        <li>打字指示器</li>
+                        <li>消息气泡设计</li>
+                    </ul>
+                    <a href="components/chat.html" class="preview-button">查看聊天组件</a>
+                </div>
+
+                <div class="component-card">
+                    <h3>👤 玩家卡片</h3>
+                    <p>游戏桌面上的玩家信息卡片，展示玩家头像、昵称和筹码。</p>
+                    <ul class="features">
+                        <li>玩家头像显示</li>
+                        <li>玩家昵称</li>
+                        <li>筹码数量</li>
+                        <li>状态指示（当前回合/激活）</li>
+                    </ul>
+                    <a href="components/player-card.html" class="preview-button">查看玩家卡片</a>
+                </div>
+
+                <div class="component-card">
+                    <h3>🎲 牌桌组件</h3>
+                    <p>纯粹的扑克牌桌组件，提供椭圆形桌面设计。</p>
+                    <ul class="features">
+                        <li>椭圆形桌面设计</li>
+                        <li>渐变绿色桌布效果</li>
+                        <li>木质边框样式</li>
+                        <li>可自定义尺寸和样式</li>
+                        <li>响应式设计</li>
+                    </ul>
+                    <a href="components/poker-table.html" class="preview-button">查看牌桌组件</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 资源文件分组 -->
+        <div class="section">
+            <h2 class="section-title">📁 资源文件</h2>
+            <div class="components-grid">
+                <div class="component-card">
+                    <h3>🎨 通用样式</h3>
+                    <p>包含所有页面和组件的共享样式，提供统一的设计语言。</p>
+                    <ul class="features">
+                        <li>通用按钮样式</li>
+                        <li>卡片组件样式</li>
+                        <li>表单输入样式</li>
+                        <li>动画效果定义</li>
+                        <li>响应式设计</li>
+                    </ul>
+                    <a href="assets/css/common.css" class="preview-button">查看样式文件</a>
+                </div>
+
+                <div class="component-card">
+                    <h3>⚡ 通用脚本</h3>
+                    <p>提供通用的JavaScript功能，包括工具函数、动画效果和表单验证。</p>
+                    <ul class="features">
+                        <li>工具函数库</li>
+                        <li>动画效果管理</li>
+                        <li>表单验证系统</li>
+                        <li>通知系统</li>
+                        <li>事件处理工具</li>
+                    </ul>
+                    <a href="assets/js/common.js" class="preview-button">查看脚本文件</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="tech-stack">
+            <h3>🛠️ 技术栈</h3>
+            <div class="tech-list">
+                <div class="tech-item">React 18</div>
+                <div class="tech-item">Vite</div>
+                <div class="tech-item">PIXI.js</div>
+                <div class="tech-item">GSAP</div>
+                <div class="tech-item">Socket.io</div>
+                <div class="tech-item">Node.js</div>
+                <div class="tech-item">MongoDB</div>
+                <div class="tech-item">JWT</div>
+                <div class="tech-item">Howler.js</div>
+                <div class="tech-item">CSS3</div>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>📋 如何使用这些静态页面</h3>
+            <ol>
+                <li><strong>直接打开：</strong> 双击任意HTML文件即可在浏览器中查看</li>
+                <li><strong>本地服务器：</strong> 使用 <code>python -m http.server</code> 或 <code>npx serve</code> 启动本地服务器</li>
+                <li><strong>开发环境：</strong> 在项目根目录运行 <code>npm run dev</code> 启动完整的开发环境</li>
+                <li><strong>构建版本：</strong> 运行 <code>npm run build</code> 生成生产版本</li>
+            </ol>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 扑克游戏项目 - 静态预览版本</p>
+            <p>这些页面展示了游戏界面的主要设计元素和交互效果</p>
+        </div>
+    </div>
+    
+    <script src="assets/js/common.js"></script>
+</body>
+</html>
