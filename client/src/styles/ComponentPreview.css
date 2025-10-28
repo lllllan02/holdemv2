@@ -10,6 +10,7 @@
   flex-direction: column;
   gap: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 0 !important;
 }
 
 .preview-header h3 {
@@ -24,4 +25,44 @@
 .component-list {
   max-width: 1200px;
   margin: 0 auto;
+}
+
+.component-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  height: 100%;
+}
+
+.component-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.component-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.component-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.component-description {
+  display: block;
+  line-height: 1.6;
+}
+
+.component-card-completed {
+  border-left: 4px solid brushstyle #52c41a;
+}
+
+.component-card-in-progress {
+  border-left: 4px solid #1890ff;
+}
+
+.component-card-planned {
+  border-left: 4px solid #d9d9d9;
 }
