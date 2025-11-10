@@ -1,0 +1,56 @@
+/* TopBarShowcase.css */
+.topbar-showcase {
+  padding: 24px;
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+.showcase-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.showcase-header h2 {
+  margin-bottom: 8px;
+}
+
+.showcase-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.interactive-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  background: #fafafa;
+  border: 1px dashed #d9d9d9;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.preset-scenario {
+  text-align: center;
+}
+
+.preset-scenario h4 {
+  margin-bottom: 16px;
+  color: #1890ff;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .topbar-showcase {
+    padding: 16px;
+  }
+  
+  .showcase-content {
+    max-width: 100%;
+  }
+  
+  .interactive-preview {
+    min-height: 300px;
+    padding: 16px;
+  }
+}

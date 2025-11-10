@@ -1,0 +1,257 @@
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 80px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  font-size: 24px;
+  padding: 0 50px;
+}
+
+.top-bar-left-section {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.top-bar-center-section {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  justify-content: center;
+}
+
+.top-bar-game-info-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.top-bar-info-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.top-bar-info-value {
+  font-size: 18px;
+  font-weight: bold;
+  color: #4CAF50;
+}
+
+.top-bar-info-value-pot {
+  color: #FFD700;
+  font-size: 20px;
+}
+
+.top-bar-info-value-action {
+  color: #FF6B6B;
+  font-size: 18px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.top-bar-right-section {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.top-bar-profile-container {
+  width: 280px;
+  height: 64px;
+  border-radius: 50px 24px 24px 50px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  background: linear-gradient(180deg, #1A233B 0%, #1F2A47 100%);
+  padding: 6px 16px 6px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  gap: 12px;
+}
+
+.top-bar-profile-container::before,
+.top-bar-profile-container::after {
+  display: none !important;
+  box-shadow: none !important;
+}
+
+.top-bar-profile-image {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.top-bar-profile-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.top-bar-profile-image.hidden {
+  display: none;
+}
+
+.top-bar-player-info-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding-left: 0;
+  min-width: 0;
+}
+
+.top-bar-player-info-container h1,
+.top-bar-player-info-container h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.3;
+  width: 100%;
+  text-align: left;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.top-bar-player-subtitle {
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 6px;
+  text-align: left !important;
+  width: 100%;
+  display: block;
+  font-size: 15px;
+  letter-spacing: 0.3px;
+}
+
+.top-bar-player-chips {
+  font-size: 19px;
+  color: #66CC33;
+  line-height: 1;
+  display: inline-block;
+  text-align: left;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.top-bar-chips-container {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.top-bar-chips-symbol {
+  font-size: 16px;
+  color: #66CC33;
+  font-weight: 600;
+  line-height: 1;
+  display: inline-block;
+  font-family: Arial, sans-serif;
+}
+
+@media (max-width: 1024px) {
+  .top-bar {
+    padding: 0 20px;
+  }
+
+  .top-bar-center-section {
+    gap: 15px;
+  }
+
+  .top-bar-info-label {
+    font-size: 10px;
+  }
+
+  .top-bar-info-value {
+    font-size: 14px;
+  }
+
+  .top-bar-info-value-pot {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .top-bar {
+    height: 70px;
+    flex-direction: column;
+    padding: 10px 15px;
+    gap: 10px;
+  }
+
+  .top-bar-left-section {
+    display: none;
+  }
+
+  .top-bar-center-section {
+    gap: 10px;
+    flex: initial;
+  }
+
+  .top-bar-right-section {
+    flex: initial;
+  }
+  
+  .top-bar-profile-container {
+    width: 220px;
+  }
+  
+  .top-bar-profile-image {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .top-bar-player-chips {
+    font-size: 16px;
+  }
+  
+  .top-bar-player-subtitle {
+    font-size: 14px;
+  }
+
+  .top-bar-game-info-item {
+    gap: 3px;
+  }
+
+  .top-bar-info-label {
+    font-size: 9px;
+  }
+
+  .top-bar-info-value {
+    font-size: 12px;
+  }
+
+  .top-bar-info-value-pot {
+    font-size: 14px;
+  }
+}

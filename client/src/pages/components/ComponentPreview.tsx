@@ -21,6 +21,13 @@ const components: ComponentInfo[] = [
     status: 'completed',
     route: '/poker-cards',
   },
+  {
+    id: 'topbar',
+    title: '顶部导航栏组件',
+    description: '固定顶部导航栏，显示底池、玩家数、游戏阶段和玩家信息',
+    status: 'completed',
+    route: '/topbar',
+  },
   // 可以在这里添加更多组件
 ];
 
