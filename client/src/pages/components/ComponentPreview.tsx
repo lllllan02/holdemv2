@@ -28,6 +28,13 @@ const components: ComponentInfo[] = [
     status: 'completed',
     route: '/topbar',
   },
+  {
+    id: 'bottombar',
+    title: '底部操作栏组件',
+    description: '固定底部操作栏，提供过牌、跟注、加注、梭哈和弃牌等游戏操作',
+    status: 'completed',
+    route: '/bottombar',
+  },
   // 可以在这里添加更多组件
 ];
 
