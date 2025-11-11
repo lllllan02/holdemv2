@@ -43,6 +43,13 @@ const components: ComponentInfo[] = [
     status: 'completed',
     route: '/chat',
   },
+  {
+    id: 'game-action-bar',
+    title: '游戏操作栏组件（融合版）',
+    description: '将底部操作栏和聊天组件融合在一起，提供完整的游戏操作和聊天功能',
+    status: 'completed',
+    route: '/game-action-bar',
+  },
   // 可以在这里添加更多组件
 ];
 

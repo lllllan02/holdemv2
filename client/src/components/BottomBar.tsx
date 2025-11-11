@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import './BottomBar.css';
 
-interface BottomBarProps {
+export interface BottomBarProps {
   // 玩家余额
   playerBalance?: number;
   // 当前需要跟注的金额

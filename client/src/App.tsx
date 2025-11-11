@@ -4,6 +4,7 @@ import { PokerCardShowcase } from './pages/components/PokerCardShowcase';
 import { TopBarShowcase } from './pages/components/TopBarShowcase';
 import { BottomBarShowcase } from './pages/components/BottomBarShowcase';
 import { ChatShowcase } from './pages/components/ChatShowcase';
+import { GameActionBarShowcase } from './pages/components/GameActionBarShowcase';
 import './App.css';
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
         <Route path="/topbar" element={<TopBarShowcase />} />
         <Route path="/bottombar" element={<BottomBarShowcase />} />
         <Route path="/chat" element={<ChatShowcase />} />
+        <Route path="/game-action-bar" element={<GameActionBarShowcase />} />
       </Routes>
     </Router>
   );
