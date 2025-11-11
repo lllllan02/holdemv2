@@ -1,3 +1,4 @@
+import React from 'react';
 import { Layout, Card, Typography, Row, Col, Tag, Empty } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/ComponentPreview.css';
@@ -35,6 +36,13 @@ const components: ComponentInfo[] = [
     status: 'completed',
     route: '/bottombar',
   },
+  {
+    id: 'chat',
+    title: '聊天组件',
+    description: '游戏内聊天功能，支持文字消息和表情符号，可折叠展开',
+    status: 'completed',
+    route: '/chat',
+  },
   // 可以在这里添加更多组件
 ];
 
@@ -60,54 +68,56 @@ export const ComponentPreview: React.FC = () => {
   };
 
   return (
-    <Layout className="component-preview-layout">
-      <Header className="preview-header">
-        <Title level={3}>组件预览</Title>
-        <Text type="secondary">用于展示和测试各种组件</Text>
-      </Header>
-      <Content className="preview-content">
-        <div className="component-list">
-          {components.length > 0 ? (
-            <Row gutter={[24, 24]}>
-              {components.map(component => (
-                <Col key={component.id} xs={24} sm={24} md={12} lg={8}>
-                  <Card
-                    hoverable={component.status !== 'planned'}
-                    className={`component-card component-card-${component.status}`}
-                    onClick={() => handleCardClick(component)}
-                    style={{ height: '100%' }}
-                  >
-                    <div className="component-card-body">
-                      <div className="component-card-header">
-                        <Title level={4} style={{ margin: 0 }}>
-                          {component.title}
-                        </Title>
-                        <Tag color={statusColors[component.status]}>
-                          {statusTexts[component.status]}
-                        </Tag>
+    <div style={{ minHeight: '100vh', background: '#f5f5f5' }}>
+      <Layout className="component-preview-layout">
+        <Header className="preview-header">
+          <Title level={3}>组件预览</Title>
+          <Text type="secondary">用于展示和测试各种组件</Text>
+        </Header>
+        <Content className="preview-content">
+          <div className="component-list">
+            {components.length > 0 ? (
+              <Row gutter={[24, 24]}>
+                {components.map(component => (
+                  <Col key={component.id} xs={24} sm={24} md={12} lg={8}>
+                    <Card
+                      hoverable={component.status !== 'planned'}
+                      className={`component-card component-card-${component.status}`}
+                      onClick={() => handleCardClick(component)}
+                      style={{ height: '100%' }}
+                    >
+                      <div className="component-card-body">
+                        <div className="component-card-header">
+                          <Title level={4} style={{ margin: 0 }}>
+                            {component.title}
+                          </Title>
+                          <Tag color={statusColors[component.status]}>
+                            {statusTexts[component.status]}
+                          </Tag>
+                        </div>
+                        <Text type="secondary" className="component-description">
+                          {component.description}
+                        </Text>
                       </div>
-                      <Text type="secondary" className="component-description">
-                        {component.description}
-                      </Text>
-                    </div>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
-          ) : (
-            <Card>
-              <Empty 
-                description={
-                  <Text type="secondary">
-                    暂无组件<br />
-                    当您实现组件后，可以在这里展示和预览
-                  </Text>
-                }
-              />
-            </Card>
-          )}
-        </div>
-      </Content>
-    </Layout>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            ) : (
+              <Card>
+                <Empty 
+                  description={
+                    <Text type="secondary">
+                      暂无组件<br />
+                      当您实现组件后，可以在这里展示和预览
+                    </Text>
+                  }
+                />
+              </Card>
+            )}
+          </div>
+        </Content>
+      </Layout>
+    </div>
   );
 };
